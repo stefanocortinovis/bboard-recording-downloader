@@ -144,3 +144,4 @@ cython_debug/
 chromedriver*
 geckodriver*
 *.mp4
+*.html
