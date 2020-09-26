@@ -29,14 +29,16 @@ class TqdmUpTo(tqdm):
 parser = argparse.ArgumentParser(description="Download recordings from Blackboard Collaborate.")
 parser.add_argument("url", metavar="URL", type=str, help="URL of the recording")
 parser.add_argument("dest", metavar="DEST", type=str, nargs="?", default="./", help="Directory where to save recording")
+parser.add_argument("--gui", dest="headless", action="store_false", default=True, help="Uses the GUI version of the browser; mostly for debug purposes")
 args = parser.parse_args()
 
 # TODO: add support to other browsers
 opts = webdriver.FirefoxOptions()
-opts.headless = True
+opts.headless = args.headless
 driver = webdriver.Firefox(executable_path="./geckodriver_026", options=opts)
 driver.get(args.url)
 try:
+    # TODO: catch authorization denied
     recording_title = WebDriverWait(driver, 5).until(
         EC.presence_of_element_located((By.ID, "recording-name"))
     ).get_attribute("innerText").replace('/', '-')
