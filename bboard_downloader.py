@@ -5,10 +5,21 @@ import argparse
 import urllib.request as urllib
 from pathlib import Path
 from selenium import webdriver
+from selenium.common.exceptions import TimeoutException, WebDriverException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from tqdm import tqdm
+
+
+def is_unauthorized(driver):
+    unauthorized = False
+    try:
+        element = driver.find_element_by_xpath("//h1[@class='recording-failure-title full-page-title ng-scope ng-binding']")
+        if element.get_attribute("analytics-id") == "recording.failure.unauthorized.title":
+            unauthorized = True
+    finally:
+        return unauthorized
 
 
 class TqdmUpTo(tqdm):
@@ -38,13 +49,17 @@ opts.headless = args.headless
 driver = webdriver.Firefox(executable_path="./geckodriver_026", options=opts)
 driver.get(args.url)
 try:
-    # TODO: catch authorization denied
     recording_title = WebDriverWait(driver, 5).until(
         EC.presence_of_element_located((By.ID, "recording-name"))
     ).get_attribute("innerText").replace('/', '-')
     video_src = WebDriverWait(driver, 5).until(
         EC.presence_of_element_located((By.ID, "playback-video-playback-video_html5_api"))
     ).get_attribute("src")
+except TimeoutException:
+    if is_unauthorized(driver):
+        raise WebDriverException("Unauthorized request: the recording URL is likely to have expired")
+    else:
+        raise TimeoutException("Can't seem to find the video at the specified URL; run the command with --gui for graphical debugging")
 finally:
     driver.quit()
 
