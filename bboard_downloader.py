@@ -2,7 +2,6 @@
 Built on Python 3.8.5
 """
 import argparse
-import urllib.request as urllib
 from pathlib import Path
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException, WebDriverException
@@ -10,6 +9,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from tqdm import tqdm
+import urllib.request as urllib
 
 
 def is_unauthorized(driver):
@@ -39,15 +39,22 @@ class TqdmUpTo(tqdm):
 
 parser = argparse.ArgumentParser(description="Download recordings from Blackboard Collaborate.")
 parser.add_argument("url", metavar="URL", type=str, help="URL of the recording")
-parser.add_argument("dest", metavar="DEST", type=str, nargs="?", default="./", help="Directory where to save recording")
+parser.add_argument("dest", metavar="DEST", type=str, nargs="?", default="./", help="Directory where to save recording; default is current directory")
 parser.add_argument("--gui", dest="headless", action="store_false", default=True, help="Uses the GUI version of the browser; mostly for debug purposes")
-parser.add_argument("--maxtime", dest="T", type=int, help="Maximum time allowed for the recording to load before a TimeoutError is thrown")
+parser.add_argument("--maxtime", dest="T", type=int, default=10, help="Maximum time allowed for the recording to load before a TimeoutError is thrown")
+parser.add_argument("--browser", dest="browser", type=str, choices=["chrome", "firefox"], default="chrome", help="Browser to be used to download the recording; currently supported options are Google Chrome and Mozilla Firefox; default is Chrome")
 args = parser.parse_args()
 
-# TODO: add support to other browsers
-opts = webdriver.FirefoxOptions()
-opts.headless = args.headless
-driver = webdriver.Firefox(executable_path="./geckodriver_026", options=opts)
+if args.browser.lower() == "chrome":
+    opts = webdriver.ChromeOptions()
+    opts.headless = args.headless
+    driver = webdriver.Chrome(executable_path="./chromedriver", options=opts)
+elif args.browser.lower() == "firefox":
+    opts = webdriver.FirefoxOptions()
+    opts.headless = args.headless
+    driver = webdriver.Firefox(executable_path="./geckodriver_026", options=opts)
+else:
+    raise ValueError("The only currently supported browsers are Google Chrome and Mozilla Firefox")
 driver.get(args.url)
 try:
     recording_title = WebDriverWait(driver, args.T).until(
