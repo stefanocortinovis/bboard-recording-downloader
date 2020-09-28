@@ -42,6 +42,7 @@ parser = argparse.ArgumentParser(description="Download recordings from Blackboar
 parser.add_argument("url", metavar="URL", type=str, help="URL of the recording")
 parser.add_argument("dest", metavar="DEST", type=str, nargs="?", default=os.getcwd(), help="Directory where to save recording; default is current directory")
 parser.add_argument("--browser", dest="browser", type=str, choices=["chrome", "firefox"], default="chrome", help="Browser to be used to download the recording; currently supported options are Google Chrome and Mozilla Firefox; default is Chrome")
+parser.add_argument("--executable_path", dest="executable_path", type=str, default="default", help="Path to webdriver executable; default is './chromedriver' for Chrome and './geckodriver' for Firefox")
 parser.add_argument("--maxtime", dest="T", type=int, default=10, help="Maximum time allowed for the recording to load before a TimeoutError is thrown")
 parser.add_argument("--gui", dest="headless", action="store_false", default=True, help="Uses the GUI version of the browser; mostly for debug purposes")
 args = parser.parse_args()
@@ -49,11 +50,15 @@ args = parser.parse_args()
 if args.browser.lower() == "chrome":
     opts = webdriver.ChromeOptions()
     opts.headless = args.headless
-    driver = webdriver.Chrome(executable_path="./chromedriver", options=opts)
+    if args.executable_path == "default":
+        args.executable_path = Path("./chromedriver")
+    driver = webdriver.Chrome(executable_path=args.executable_path, options=opts)
 elif args.browser.lower() == "firefox":
     opts = webdriver.FirefoxOptions()
     opts.headless = args.headless
-    driver = webdriver.Firefox(executable_path="./geckodriver_026", options=opts)
+    if args.executable_path == "default":
+        args.executable_path = Path("./geckodriver")
+    driver = webdriver.Firefox(executable_path=args.executable_path, options=opts)
 else:
     raise ValueError("The only currently supported browsers are Google Chrome and Mozilla Firefox")
 driver.get(args.url)
