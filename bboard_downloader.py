@@ -51,13 +51,14 @@ if args.browser.lower() == "chrome":
     opts = webdriver.ChromeOptions()
     opts.headless = args.headless
     if args.executable_path == "default":
-        args.executable_path = Path("./chromedriver")
+        args.executable_path = "./chromedriver"
+    print(args.executable_path)
     driver = webdriver.Chrome(executable_path=args.executable_path, options=opts)
 elif args.browser.lower() == "firefox":
     opts = webdriver.FirefoxOptions()
     opts.headless = args.headless
     if args.executable_path == "default":
-        args.executable_path = Path("./geckodriver")
+        args.executable_path = "./geckodriver"
     driver = webdriver.Firefox(executable_path=args.executable_path, options=opts)
 else:
     raise ValueError("The only currently supported browsers are Google Chrome and Mozilla Firefox")
