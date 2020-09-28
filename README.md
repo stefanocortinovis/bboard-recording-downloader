@@ -8,7 +8,7 @@ CLI tool to download recordings from Blackboard Collaborate.
 foo@bar:~$ python3 bboard_downloader.py -h
 usage: bboard_downloader.py [-h] [--browser {chrome,firefox}] [--executable_path EXECUTABLE_PATH] [--maxtime T] [--gui] URL [DEST]
 
-Download recordings from Blackboard Collaborate.
+Download recordings from Blackboard Collaborate. It requires either Chrome or Firefox to be installed and the associated webdriver to be in the current working directory or at a location specified through the executable_path argument.
 
 positional arguments:
   URL                   URL of the recording
