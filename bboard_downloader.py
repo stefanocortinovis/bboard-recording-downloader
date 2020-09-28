@@ -49,10 +49,10 @@ opts.headless = args.headless
 driver = webdriver.Firefox(executable_path="./geckodriver_026", options=opts)
 driver.get(args.url)
 try:
-    recording_title = WebDriverWait(driver, 5).until(
+    recording_title = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.ID, "recording-name"))
     ).get_attribute("innerText").replace('/', '-')
-    video_src = WebDriverWait(driver, 5).until(
+    video_src = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.ID, "playback-video-playback-video_html5_api"))
     ).get_attribute("src")
 except TimeoutException:
