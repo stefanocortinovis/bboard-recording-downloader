@@ -2,6 +2,7 @@
 Built on Python 3.8.5
 """
 import argparse
+import os
 from pathlib import Path
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException, WebDriverException
@@ -10,16 +11,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from tqdm import tqdm
 import urllib.request as urllib
-
-
-def is_unauthorized(driver):
-    unauthorized = False
-    try:
-        element = driver.find_element_by_xpath("//h1[@class='recording-failure-title full-page-title ng-scope ng-binding']")
-        if element.get_attribute("analytics-id") == "recording.failure.unauthorized.title":
-            unauthorized = True
-    finally:
-        return unauthorized
 
 
 class TqdmUpTo(tqdm):
@@ -37,12 +28,22 @@ class TqdmUpTo(tqdm):
         self.n = block * block_size
 
 
+def is_unauthorized(driver):
+    unauthorized = False
+    try:
+        element = driver.find_element_by_xpath("//h1[@class='recording-failure-title full-page-title ng-scope ng-binding']")
+        if element.get_attribute("analytics-id") == "recording.failure.unauthorized.title":
+            unauthorized = True
+    finally:
+        return unauthorized
+
+
 parser = argparse.ArgumentParser(description="Download recordings from Blackboard Collaborate.")
 parser.add_argument("url", metavar="URL", type=str, help="URL of the recording")
-parser.add_argument("dest", metavar="DEST", type=str, nargs="?", default="./", help="Directory where to save recording; default is current directory")
-parser.add_argument("--gui", dest="headless", action="store_false", default=True, help="Uses the GUI version of the browser; mostly for debug purposes")
-parser.add_argument("--maxtime", dest="T", type=int, default=10, help="Maximum time allowed for the recording to load before a TimeoutError is thrown")
+parser.add_argument("dest", metavar="DEST", type=str, nargs="?", default=os.getcwd(), help="Directory where to save recording; default is current directory")
 parser.add_argument("--browser", dest="browser", type=str, choices=["chrome", "firefox"], default="chrome", help="Browser to be used to download the recording; currently supported options are Google Chrome and Mozilla Firefox; default is Chrome")
+parser.add_argument("--maxtime", dest="T", type=int, default=10, help="Maximum time allowed for the recording to load before a TimeoutError is thrown")
+parser.add_argument("--gui", dest="headless", action="store_false", default=True, help="Uses the GUI version of the browser; mostly for debug purposes")
 args = parser.parse_args()
 
 if args.browser.lower() == "chrome":
