@@ -38,7 +38,7 @@ def is_unauthorized(driver):
         return unauthorized
 
 
-parser = argparse.ArgumentParser(description="Download recordings from Blackboard Collaborate. It requires either Chrome or Firefox to be installed and the associated webdriver to be in the current working directory or at a path specified.")
+parser = argparse.ArgumentParser(description="Download recordings from Blackboard Collaborate. It requires either Chrome or Firefox to be installed and the associated webdriver to be in the current working directory or at a location specified through the executable_path argument.")
 parser.add_argument("url", metavar="URL", type=str, help="URL of the recording")
 parser.add_argument("dest", metavar="DEST", type=str, nargs="?", default=os.getcwd(), help="Directory where to save recording; default is current directory")
 parser.add_argument("--browser", dest="browser", type=str, choices=["chrome", "firefox"], default="chrome", help="Browser to be used to download the recording; currently supported options are Google Chrome and Mozilla Firefox; default is Chrome")
@@ -52,7 +52,6 @@ if args.browser.lower() == "chrome":
     opts.headless = args.headless
     if args.executable_path == "default":
         args.executable_path = "./chromedriver"
-    print(args.executable_path)
     driver = webdriver.Chrome(executable_path=args.executable_path, options=opts)
 elif args.browser.lower() == "firefox":
     opts = webdriver.FirefoxOptions()
