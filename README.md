@@ -4,7 +4,7 @@ CLI tool to download recordings from Blackboard Collaborate. This is an unoffici
 
 ## Setup and Requirements
 
-This tool was tested on Linux and Windows, but it should work also on OSX. It was built on Python 3.8.5 and it requires the libraries `selenium` and `tqdm`. The required libraries may be installed with:
+This tool was briefly tested on Linux and Windows, but it should work also on OSX. It was built on Python 3.8.5 and it requires the libraries `selenium` and `tqdm`. The required libraries may be installed with:
 
 ```console
 git clone https://github.com/scortino/bboard-recording-downloader.git
