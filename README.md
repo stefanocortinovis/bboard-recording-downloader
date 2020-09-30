@@ -34,7 +34,7 @@ optional arguments:
                         Browser to be used to download the recording; currently supported options are Google Chrome and Mozilla Firefox; default is Chrome
   --executable_path EXECUTABLE_PATH
                         Path to webdriver executable; default is './chromedriver' for Chrome and './geckodriver' for Firefox
-  --maxtime T           Maximum time allowed for the recording to load before a TimeoutError is thrown
+  --maxtime T           Maximum time in seconds allowed for the recording to load before a TimeoutError is thrown; default is 10s
   --gui                 Uses the GUI version of the browser; mostly for debug purposes
 
 ```
