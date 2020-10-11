@@ -10,7 +10,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from tqdm import tqdm
-import urllib.request as urllib
+import urllib.request as request
 
 
 class TqdmUpTo(tqdm):
@@ -79,4 +79,4 @@ outdir = Path(args.dest)
 if not outdir.is_dir():
     raise FileNotFoundError(f"No such file or directory: {outdir}")
 
-urllib.urlretrieve(video_src, outdir/f"{recording_title}.mp4", reporthook=TqdmUpTo(recording_title))
+request.urlretrieve(video_src, outdir/f"{recording_title}.mp4", reporthook=TqdmUpTo(recording_title))
