@@ -62,7 +62,8 @@ outdir = Path(args.dest)
 if not outdir.is_dir():
     raise FileNotFoundError(f"No such file or directory: {outdir}")
 
-response = requests.get(video_src, stream=True) # stream allows to iterate over response
+headers = {'User-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.75.14 (KHTML, like Gecko) Version/7.0.3 Safari/7046A194A'} # http://www.useragentstring.com/index.php?id=19858
+response = requests.get(video_src, headers=headers, stream=True) # stream allows to iterate over response
 total_size_in_bytes= int(response.headers.get('content-length', 0))
 block_size = 1024 #1 Kibibyte
 progress_bar = tqdm(desc=f"Downloading {recording_title}", total=total_size_in_bytes, unit='iB', unit_scale=True)
