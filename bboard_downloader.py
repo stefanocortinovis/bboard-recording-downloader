@@ -1,31 +1,13 @@
-"""
-Built on Python 3.8.5
-"""
 import argparse
 import os
 from pathlib import Path
+import requests
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException, WebDriverException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from tqdm import tqdm
-import urllib.request as request
-
-
-class TqdmUpTo(tqdm):
-    def __init__(self, title):
-        super(TqdmUpTo, self).__init__(desc=f"Downloading {title}", total=9e9, unit="B", unit_scale=True)
-        self.n = 0
-
-    def __call__(self, block, block_size, total_size=None):
-        self.update_to(block, block_size, total_size)
-
-    def update_to(self, block, block_size, total_size=None):
-        if total_size is not None:
-            self.total = total_size
-        self.update(block * block_size - self.n)
-        self.n = block * block_size
 
 
 def is_unauthorized(driver):
@@ -80,4 +62,12 @@ outdir = Path(args.dest)
 if not outdir.is_dir():
     raise FileNotFoundError(f"No such file or directory: {outdir}")
 
-request.urlretrieve(video_src, outdir/f"{recording_title}.mp4", reporthook=TqdmUpTo(recording_title))
+response = requests.get(video_src, stream=True) # stream allows to iterate over response
+total_size_in_bytes= int(response.headers.get('content-length', 0))
+block_size = 1024 #1 Kibibyte
+progress_bar = tqdm(desc=f"Downloading {recording_title}", total=total_size_in_bytes, unit='iB', unit_scale=True)
+with open(outdir/f"{recording_title}.mp4", 'wb') as f:
+    for chunk in response.iter_content(block_size):
+        progress_bar.update(len(chunk))
+        f.write(chunk)
+progress_bar.close()
