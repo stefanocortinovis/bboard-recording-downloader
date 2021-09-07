@@ -1,4 +1,5 @@
 import requests
+from datetime import datetime
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException, WebDriverException
 from selenium.webdriver.common.by import By
@@ -36,6 +37,12 @@ def get_video_src(driver, url, T):
         recording_title = WebDriverWait(driver, T).until(
             EC.presence_of_element_located((By.ID, "recording-name"))
         ).get_attribute("innerText").replace("/", "-")
+        recording_date = datetime.strptime(
+            WebDriverWait(driver, T).until(
+                EC.presence_of_element_located((By.XPATH, '//span[@ng-if="recordingMenu.model.recordingDate"]'))
+            ).get_attribute("innerText"),
+            '%b %d, %Y'
+        ).strftime('%Y%m%d')
         video_src = driver.find_element_by_id("playback-video-playback-video_html5_api").get_attribute("src")
     except TimeoutException:
         if is_unauthorized(driver):
@@ -44,14 +51,15 @@ def get_video_src(driver, url, T):
             raise TimeoutException("Can't seem to find the video at the specified URL; try to manually increase the maximum waiting time or run the command with --gui for graphical debugging")
     finally:
         driver.quit()
-    return recording_title, video_src
+    return recording_title, recording_date, video_src
 
-def download_video(video_src, outdir, recording_title=''):
+def download_video(video_src, outdir, recording_date, recording_title='', course_code=None):
+    outpath = outdir/f"{recording_date}_{recording_title}.mp4" if course_code is None else outdir/f"{course_code}_{recording_date}.mp4"
     response = requests.get(video_src, headers=HEADERS, stream=True) # stream allows to iterate over response
     total_size_in_bytes= int(response.headers.get('content-length', 0))
     block_size = 1024 #1 Kibibyte
     progress_bar = tqdm(desc=f"Downloading {recording_title}", total=total_size_in_bytes, unit='iB', unit_scale=True)
-    with open(outdir/f"{recording_title}.mp4", 'wb') as f:
+    with open(outpath, 'wb') as f:
         for chunk in response.iter_content(block_size):
             progress_bar.update(len(chunk))
             f.write(chunk)
