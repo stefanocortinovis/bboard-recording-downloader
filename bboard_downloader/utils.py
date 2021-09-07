@@ -9,6 +9,7 @@ def validate(args):
         raise FileNotFoundError(f"No such file or directory: {dest}")
     validated_args['dest'] = dest
     validated_args['url'] = input("Paste the recording URL: ") if args.url is None else args.url # TODO: validate as valid URL
+    validated_args['course'] = None if args.course == "default" else args.course
 
     if (browser := args.browser.lower()) == 'chrome':
         validated_args['executable_path'] = './chromedriver' if args.executable_path == 'default' else args.executable_path
