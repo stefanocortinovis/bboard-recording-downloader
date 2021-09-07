@@ -4,12 +4,12 @@ CLI tool to download recordings from Blackboard Collaborate. This is an unoffici
 
 ## Setup and Requirements
 
-This tool was briefly tested on Linux and Windows, but it should work also on OSX. It was built on Python 3.8.5 and it requires the libraries `selenium` and `tqdm`. The required libraries may be installed with:
+This tool was briefly tested on Linux and Windows, but it should work also on OSX. It was built on Python 3.8.5 and it requires the libraries `requests`, `selenium` and `tqdm`. The tool may be installed locally as follows:
 
 ```console
 git clone https://github.com/scortino/bboard-recording-downloader.git
 cd bboard-recording-downloader
-python -m pip -r requirements.txt
+python setup.py install
 ```
 
 The browsers currently supported are Google Chrome and Mozilla Firefox. In addition to the preferred browser being installed, the user is required to download the associated webdriver (i.e. [`chromedriver`](https://chromedriver.chromium.org/) for Chrome or [`geckodriver`](https://github.com/mozilla/geckodriver/releases/tag/v0.26.0) for Firefox). The executable should be placed in the same directory as the `bboard_downloader.py` file. Alternatively, the user may specify the location of the webdriver using the `--executable_path` option as described below. 
@@ -19,14 +19,14 @@ Important note: unfortunately, the latest version of `geckodriver` (v0.27.0) has
 ## Summary Usage 
 
 ```console
-foo@bar:~$ python bboard_downloader.py -h
-usage: bboard_downloader.py [-h] [--browser {chrome,firefox}] [--executable_path EXECUTABLE_PATH] [--maxtime T] [--gui] URL [DEST]
+foo@bar:~$ bboard -h
+usage: bboard_downloader.py [-h] [--browser {chrome,firefox}] [--executable_path EXECUTABLE_PATH] [--maxtime T] [--gui] [DEST] [URL]
 
 Download recordings from Blackboard Collaborate. It requires either Chrome or Firefox to be installed and the associated webdriver to be in the current working directory or at a location specified through the executable_path argument.
 
 positional arguments:
-  URL                   URL of the recording
   DEST                  Directory where to save recording; default is current directory
+  URL                   URL of the recording; if not provided, the user will be asked to paste it into the terminal once the program starts
 
 optional arguments:
   -h, --help            show this help message and exit
