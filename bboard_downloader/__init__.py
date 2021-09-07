@@ -1,0 +1,5 @@
+__title__ = 'bboard_downloader'
+__author__ = 'Stefano Cortinovis'
+__email__ = 'scortino@pm.me'
+__url__ = 'https://github.com/scortino/bboard-recording-downloader'
+__version__ = '0.1'

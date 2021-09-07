@@ -1,6 +1,6 @@
-from parser import parser
-from scraper import get_driver, get_video_src, download_video
-from utils import validate
+from .parser import parser
+from .scraper import get_driver, get_video_src, download_video
+from .utils import validate
 
 
 def main():
